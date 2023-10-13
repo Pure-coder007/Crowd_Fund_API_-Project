@@ -1,0 +1,146 @@
+import mysql.connector
+
+
+
+
+config = {
+    'user': 'root',
+    'password': 'language007',
+    'host': 'localhost',
+    'port': '3306',
+    'database': 'Crowd_Fund_API'
+}
+
+def setup_database():
+    config['database'] = None
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+
+
+
+# User Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS User (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255), 
+        email VARCHAR(255), 
+        password VARCHAR(255), 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+
+    # cursor.execute("""
+    #     CREATE TABLE IF NOT EXISTS donators (
+    #         id INT AUTO_INCREMENT PRIMARY KEY,
+    #         name VARCHAR(255) NOT NULL,
+    #         email VARCHAR(255) NOT NULL,
+    #         first_time_donating BOOLEAN,
+    #         gender VARCHAR(10),
+    #         admin BOOLEAN
+    #     );
+    # """)
+
+
+
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    category_name VARCHAR(255) NOT NULL,
+    fundraising_for VARCHAR(255) NOT NULL,
+    amount DECIMAL(20, 2) NOT NULL,
+    description TEXT,
+    expiry_date DATE,
+    minimum_amount DECIMAL(20, 2),
+    user_email VARCHAR(100),
+    request_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    request_id INT NOT NULL
+);
+
+    """)
+
+
+
+    cursor.execute("""
+    CREATE TABLE donators(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_time_donating BOOLEAN NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+);
+
+""")
+    
+
+
+
+    cursor.execute("""
+    CREATE TABLE donations_info(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    amount_donated DECIMAL(10, 2),
+    donator_name VARCHAR(255),
+    required_amount DECIMAL(10, 2),
+    email VARCHAR(255),
+    cat_id INT NOT NULL
+);
+                  
+""")
+
+
+
+    cursor.execute("""    
+    CREATE TABLE pend_requests (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255) NOT NULL,
+    category_name VARCHAR(255) NOT NULL,
+    fundraising_for VARCHAR(255) NOT NULL,
+    expiry_date DATE,
+    amount DECIMAL(20,2) NOT NULL,
+    description TEXT,
+    approved TINYINT(4) DEFAULT 0
+                   
+);
+""")
+    
+
+    cursor.execute("""
+    CREATE TABLE approved_requests (
+    id INT(11) NOT NULL PRIMARY KEY,
+    status VARCHAR(50) NOT NULL,
+    user_email VARCHAR(255) NOT NULL,
+    category_name VARCHAR(255) NOT NULL,
+    fundraising_for VARCHAR(255) NOT NULL,
+    expiry_date DATE NOT NULL,
+    amount DECIMAL(20,2) NOT NULL
+);
+""")
+    
+    cursor.execute("""
+    CREATE TABLE donated_people (
+    id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    amount_donated DECIMAL(20,2) NOT NULL,
+    category_name VARCHAR(255) NOT NULL,
+    user_email VARCHAR(255) NOT NULL
+);
+""")
+
+
+
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+  
+    
+    
+    
+    
+    if __name__ == "__main__":
+        setup_database()
