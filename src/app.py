@@ -6,7 +6,7 @@ import random
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from utilities import send_otp, approved_mail, send_mail, approved_mail_donators, received, received_admin
-from models import add_user, get_user_by_id, get_user, add_category, add_request
+from models import add_user, get_user_by_id, get_user, add_category, add_request, get_user_requests
 
 
 
@@ -158,6 +158,27 @@ def category():
     return jsonify({'message': 'Category added successfully', 'status': 200}), 200
 
 
+
+# View_Requests routes (users)
+@auth.route('/view_request', methods=['GET'])
+@jwt_required()
+def view_request():
+    user_id = get_jwt_identity()
+    # user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({'message': 'User ID not provided', 'status': 400}), 400
+
+    user_requests = get_user_requests(user_id)
+    return jsonify({'requests': user_requests, 'status': 200}), 200
+
+
+
+# Login route
+@auth.route("/logout", methods=['GET', 'POST'])
+@jwt_required()
+def logout():
+    session.pop('user', None)
+    return jsonify({'message': 'You have been logged out', 'status': 200}), 200
 
 
 
