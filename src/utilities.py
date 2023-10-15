@@ -5,10 +5,10 @@ from flask_mail import Mail, Message
 mail = Mail()
 
 def send_otp(app, email, otp):
-    with app.app_context():
         msg = Message('Verification Token', sender=app.config['MAIL_USERNAME'], recipients=[email])
         msg.body = f'Your verification token is {otp}'
-        mail.send(msg)
+        with app.app_context():
+            mail.send(msg)
 
 
 # @login_manager.user_loader
@@ -34,6 +34,7 @@ def approved_mail_donators(email):
     msg = Message('Thank you for your donations ❤❤❤', sender='Anonymous@gmail.com', recipients=[email])
     msg.body = f'Thank you for your donations on speedyhelp ❤❤❤'
     mail.send(msg)
+
 
 def received(email):
     msg = Message('You have just received an anonymous donation', sender='Anonymous@gmail.com', recipients=[email])

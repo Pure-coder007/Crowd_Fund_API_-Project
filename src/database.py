@@ -20,7 +20,7 @@ def setup_database():
 
 # User Table
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS User (
+    CREATE TABLE IF NOT EXISTS User(
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(255), 
         email VARCHAR(255), 
@@ -131,6 +131,15 @@ def setup_database():
 );
 """)
 
+    cursor.execute("""
+CREATE TABLE donator_view (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(255) NOT NULL,
+    category_name VARCHAR(255),
+    amount DECIMAL(10,2),
+    description TEXT
+);
+""")
 
 
 

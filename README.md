@@ -78,7 +78,7 @@ To login with your access_token in the Authorization holder in the bearer token 
 
 <!-- To make a fundraising request -->
 
-POST /category
+POST /category (users)
 @jwt_required
 
 REQUEST 
@@ -153,5 +153,50 @@ RESPONSE
 {
     "message": "You have been logged out",
     "status": 200
+}
+```
+
+
+GET/ (admin) /see_requests
+@jwt_required
+
+RESPONSE
+```json
+
+{
+    "message": "These are the users requests",
+     "requests": [
+        {
+            "amount": "876543.00",
+            "approved": 1,
+            "category_name": "business",
+            "description": "kjhgfd",
+            "expiry_date": "Sat, 21 Oct 2023 00:00:00 GMT",
+            "fundraising_for": "others",
+            "id": 1,
+            "user_email": "kingsleydike318@gmail.com"
+        },
+        {
+            "amount": "20000.00",
+            "approved": 1,
+            "category_name": "business",
+            "description": "vd vdc addve dfvfd",
+            "expiry_date": "Sat, 21 Oct 2023 00:00:00 GMT",
+            "fundraising_for": "yourself",
+            "id": 2,
+            "user_email": "hellotunmbi@protonmail.com"
+        },
+        {
+            "amount": "120000.00",
+            "approved": 0,
+            "category_name": "Education",
+            "description": "For the education of Others",
+            "expiry_date": null,
+            "fundraising_for": "Others",
+            "id": 3,
+            "user_email": "sj@gmail.com"
+        }
+     ],
+     "status": 200
 }
 ```

@@ -23,7 +23,7 @@ def add_user(first_name, last_name, email, password, is_admin=False):
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
         
-        cursor.execute("INSERT INTO users (first_name, last_name, email, password, is_admin) VALUES (%s, %s, %s, %s, %s)", (first_name, last_name, email, password, is_admin))
+        cursor.execute("INSERT INTO user(first_name, last_name, email, password, is_admin) VALUES (%s, %s, %s, %s, %s)", (first_name, last_name, email, password, is_admin))
         connection.commit()
     except mysql.connector.Error as err:
         print("Error: ", err)
@@ -37,7 +37,7 @@ def add_user(first_name, last_name, email, password, is_admin=False):
 def get_user_by_id(user_id):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM users WHERE id=%s', (user_id,))
+    cursor.execute('SELECT * FROM user WHERE id=%s', (user_id,))
     user_record = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -54,7 +54,7 @@ def get_user_by_id(user_id):
 def get_user(email):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM users WHERE email=%s', (email,))
+    cursor.execute('SELECT * FROM user WHERE email=%s', (email,))
     user_record = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -203,6 +203,28 @@ def set_request_status(request_id, status, user_email, category_name, fundraisin
         print("Error:", err)
         return False
 
+def requests_for_donators(user_email, category_name, amount, description):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+
+    try:
+        insert_query = """
+            INSERT INTO donator_view(user_email, category_name, amount, description)
+            VALUES (%s, %s, %s, %s)
+        """
+        cursor.execute(insert_query, (user_email, category_name, amount, description))
+
+        connection.commit()
+
+        return True
+
+    except mysql.connector.Error as err:
+        print("Error:", err)
+        return False
+
+    finally:
+        cursor.close()
+        connection.close()
 
 
 def add_donation(amount_donated, donator_name, required_amount, email, cat_id):
@@ -286,11 +308,11 @@ def add_donator(name, email, first_time_donating, gender):
 
 
 
-def donated_people(name, email, amount_donated, category_name, user_email):
+def donated_people( email, amount_donated, category_name, user_email):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
 
-    cursor.execute("INSERT INTO donated_people (name, email, amount_donated, category_name, user_email) VALUES (%s, %s, %s, %s, %s)", (name, email, amount_donated, category_name, user_email))
+    cursor.execute("INSERT INTO donated_people ( email, amount_donated, category_name, user_email) VALUES ( %s, %s, %s, %s)", (email, amount_donated, category_name, user_email))
     connection.commit()
     cursor.close()
     connection.close()
@@ -300,7 +322,7 @@ def donated_people(name, email, amount_donated, category_name, user_email):
 def get_donated_persons():
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT name, email, amount_donated, category_name, user_email FROM donated_people")
+    cursor.execute("SELECT email, amount_donated, category_name, user_email FROM donated_people")
     result = cursor.fetchall()
     cursor.close()
     connection.close()
