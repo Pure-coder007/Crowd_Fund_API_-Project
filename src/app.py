@@ -335,14 +335,16 @@ def start_donating(id):
     if donated_amount_data > balance:
         return jsonify({'message': 'You cannot donate more than the required amount', 'balance': balance}), 400
 
-    new_balance = float(balance) - donated_amount
-    update_balance_in_categories(id, new_balance)
-    # save into database
-
     minimun_donation = cat['minimum_amount']
     if donated_amount < minimun_donation:
         return jsonify({'message': 'You cannot donate less than the minimum amount', 
         'minimum_amount': minimun_donation}), 400
+
+    new_balance = float(balance) - donated_amount
+    update_balance_in_categories(id, new_balance)
+    # save into database
+
+    
     
     donated_people(donor_email, donated_amount, category_name, user_email)
     # requests_for_donators(user_email, category_name, user_request['amount'], user_request['description'])
