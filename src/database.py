@@ -20,13 +20,17 @@ def setup_database():
 
 # User Table
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS User(
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255), 
-        email VARCHAR(255), 
-        password VARCHAR(255), 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+    CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,  
+    password VARCHAR(255) NOT NULL,      
+    is_admin BOOLEAN DEFAULT FALSE,      
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
+);
+
 """)
 
 
@@ -57,7 +61,7 @@ def setup_database():
     user_email VARCHAR(100),
     request_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     request_id INT NOT NULL
 );
 
@@ -132,7 +136,7 @@ def setup_database():
 """)
 
     cursor.execute("""
-CREATE TABLE donator_view (
+    CREATE TABLE donator_view (
     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_email VARCHAR(255) NOT NULL,
     category_name VARCHAR(255),

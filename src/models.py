@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class User():
-    def __init__(self, id, first_name, last_name, email, password, is_admin=True):
+    def __init__(self, id, first_name, last_name, email, password, is_admin=False):
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
@@ -18,7 +18,7 @@ class User():
             pass
 
 
-def add_user(first_name, last_name, email, password, is_admin=False):
+def add_user(first_name, last_name, email, password, is_admin=True):
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
@@ -63,10 +63,10 @@ def get_user(email):
         return User(id=user_record['id'], first_name=user_record['first_name'], last_name=user_record['last_name'], email=user_record['email'], password=user_record['password'], is_admin=user_record['is_admin'])
     return None
 
-
+# add_category(user_id, data['category_name'], data['fundraising_for'], data['expiryDate'], data['amount'], data['description'], data['minimum_amount'])
 
 # Adding a category to the database
-def add_category(user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount):
+def add_category(user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount, balance):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
     
@@ -79,13 +79,14 @@ def add_category(user_id, category_name, fundraising_for, expiry_date, amount, d
         expiry_date = datetime.strptime(expiry_date, '%Y-%m-%d')
         
         insert_query = """
-        INSERT INTO categories (user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+        INSERT INTO categories (user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount, balance)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
     
         # Assuming you have access to the user's email or can obtain it
         # user_email = get_user_email_by_id(user_id)
         
-        values = (user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount)
+        values = (user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount, balance)
         cursor.execute(insert_query, values)
         connection.commit()
         cursor.close()
@@ -100,24 +101,33 @@ def add_category(user_id, category_name, fundraising_for, expiry_date, amount, d
         print(f"Error adding category: {str(e)}")
 
     
-        
-    
-    
+
+def fetch_category_by_id(category_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor(dictionary=True) 
+    query = """
+    SELECT * FROM categories
+    WHERE id = %s
+    """
+    cursor.execute(query, (category_id,))
+    cat = cursor.fetchone()
+    return cat
+
 
 # Getting all categories
-def add_request(user_email, category_name, fundraising_for, expiry_date, amount, description):
+def add_request(user_email, category_name, fundraising_for, expiry_date, amount, description, minimum_amount):
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
 
         # SQL INSERT statement
         insert_query = """
-        INSERT INTO pend_requests (user_email, category_name, fundraising_for, expiry_date, amount, description)
-        VALUES ( %s, %s, %s, %s, %s, %s)
+        INSERT INTO pend_requests (user_email, category_name, fundraising_for, expiry_date, amount, description, minimum_amount)
+        VALUES ( %s, %s, %s, %s, %s, %s, %s)
         """
 
         # Values to insert into the table
-        values = (user_email, category_name, fundraising_for, expiry_date, amount, description)
+        values = (user_email, category_name, fundraising_for, expiry_date, amount, description, minimum_amount)
 
         cursor.execute(insert_query, values)
         connection.commit()
@@ -138,7 +148,7 @@ def get_all_requests():
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor(dictionary=True)
-        cursor.execute('SELECT id, user_email, category_name, fundraising_for, expiry_date, amount, description, approved FROM pend_requests')
+        cursor.execute('SELECT id, user_email, category_name, fundraising_for, expiry_date, amount, description, approved, minimum_amount FROM pend_requests')
 
         requests = cursor.fetchall()
         cursor.close()
@@ -147,6 +157,34 @@ def get_all_requests():
     except mysql.connector.Error as err:
         print("MySQL Error:", err)
         return []
+    
+
+def get_minimum_amount():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('SELECT minimum_amount FROM categories LIMIT 1')
+
+    request = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    if request:
+        return float(request['minimum_amount'])
+    return None
+
+
+
+def get_all_approved_requests():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor(dictionary=True)
+    
+    cursor.execute("SELECT * FROM pend_requests WHERE approved = 1")
+    approved_requests = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    return approved_requests
+
+
 
 
 # Sowing a user his request
@@ -394,3 +432,54 @@ def update_request_approval(request_id, approved):
     except mysql.connector.Error as err:
         print("MySQL Error:", err)
         return False
+    
+    
+
+    
+def insert_needed_amount(category_id, amount_needed):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+
+    query = "INSERT INTO donations_balance (category_id, amount_remaining) VALUES (%s, %s)"
+    cursor.execute(query, (category_id, amount_needed))
+    
+    connection.commit()
+    cursor.close()
+    connection.close()
+    
+
+
+
+def update_amount(id, donated_amount):
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+
+        # Decrease the amount remaining by the donated amount
+        query = """
+            UPDATE donations_balance
+            SET amount_remaining = amount_remaining - %s
+            WHERE id = %s AND amount_remaining >= %s
+        """
+        cursor.execute(query, (donated_amount, id, donated_amount))
+        
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+
+
+
+def update_balance_in_categories(category_id, new_balance):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+
+    query = """
+    UPDATE categories
+    SET balance = %s
+    WHERE id = %s
+    """
+    cursor.execute(query, (new_balance, category_id))
+    
+    connection.commit()
+    cursor.close()
+    connection.close()

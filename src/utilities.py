@@ -2,23 +2,17 @@ import random
 from models import User, get_user_by_id
 from flask_mail import Mail, Message
 
+import random
+from flask_mail import Mail, Message
+
 mail = Mail()
 
 def send_otp(app, email, otp):
+    with app.app_context():
         msg = Message('Verification Token', sender=app.config['MAIL_USERNAME'], recipients=[email])
         msg.body = f'Your verification token is {otp}'
-        with app.app_context():
-            mail.send(msg)
+        mail.send(msg)
 
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return get_user_by_id(user_id)
-
-def send_otp(email, otp):
-    msg = Message('Verification Token', sender='Anonymous@gmail.com', recipients=[email])
-    msg.body = f'Your verification token is {otp}'
-    mail.send(msg)
 
 def approved_mail(email):
     msg = Message(' Congratulations your request has been approved, you can now receive donations', sender='Anonymous@gmail.com', recipients=[email])
