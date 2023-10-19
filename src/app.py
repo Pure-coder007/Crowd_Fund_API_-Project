@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, Blueprint, session, request
 import os
 import mysql.connector
-from database import config
+from .database import config
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import random
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
-from utilities import send_otp, approved_mail, send_mail, approved_mail_donators, received, received_admin
-from models import add_user, get_user_by_id, get_user, add_category, add_request, get_user_requests, get_all_requests, is_user_admin, update_request_approval, get_donated_persons, get_request_by_id, query_cat_id, donated_people, requests_for_donators, set_request_status, get_all_approved_requests, get_minimum_amount,update_amount, insert_needed_amount, update_balance_in_categories
+from .utilities import send_otp, approved_mail, send_mail, approved_mail_donators, received, received_admin
+from .models import add_user, get_user_by_id, get_user, add_category, add_request, get_user_requests, get_all_requests, is_user_admin, update_request_approval, get_donated_persons, get_request_by_id, query_cat_id, donated_people, requests_for_donators, set_request_status, get_all_approved_requests, get_minimum_amount,update_amount, insert_needed_amount, update_balance_in_categories
 from decimal import Decimal
 
 
@@ -306,7 +306,7 @@ def see_approved_requests():
 
 
 
-from models import fetch_category_by_id
+from .models import fetch_category_by_id
 
 @auth.route('/start_donating/<int:id>', methods=['POST'])
 def start_donating(id):
@@ -391,6 +391,3 @@ def see_donators():
 
 
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)

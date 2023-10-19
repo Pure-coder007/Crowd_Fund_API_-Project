@@ -1,5 +1,5 @@
 import random
-from models import User, get_user_by_id
+from .models import User, get_user_by_id
 from flask_mail import Mail, Message
 
 import random

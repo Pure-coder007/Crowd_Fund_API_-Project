@@ -1,5 +1,5 @@
 import mysql.connector  
-from database import config
+from .database import config
 from datetime import datetime
 
 
