@@ -34,19 +34,6 @@ def setup_database():
 """)
 
 
-    # cursor.execute("""
-    #     CREATE TABLE IF NOT EXISTS donators (
-    #         id INT AUTO_INCREMENT PRIMARY KEY,
-    #         name VARCHAR(255) NOT NULL,
-    #         email VARCHAR(255) NOT NULL,
-    #         first_time_donating BOOLEAN,
-    #         gender VARCHAR(10),
-    #         admin BOOLEAN
-    #     );
-    # """)
-
-
-
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS categories (

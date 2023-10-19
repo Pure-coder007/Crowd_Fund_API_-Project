@@ -2,7 +2,6 @@ from flask import Flask, jsonify, Blueprint, session, request
 import os
 import mysql.connector
 from database import config
-# from auth import auth
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import random
 from flask_bcrypt import Bcrypt
