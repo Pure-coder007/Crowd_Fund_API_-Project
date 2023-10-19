@@ -4,11 +4,11 @@ import mysql.connector
 
 
 config = {
-    'user': 'root',
+    'user': 'project_101',
     'password': 'language007',
-    'host': 'localhost',
+    'host': 'db4free.net',
     'port': '3306',
-    'database': 'Crowd_Fund_API'
+    'database': 'ap_project'
 }
 
 def setup_database():
