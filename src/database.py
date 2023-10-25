@@ -1,15 +1,26 @@
 import mysql.connector
+from mysql.connector import Error
 
 
+
+# config = {
+#     'user': 'project_101',
+#     'password': 'language007',
+#     'host': 'db4free.net',
+#     'port': '3306',
+#     'database': 'ap_project'
+# }
 
 
 config = {
-    'user': 'project_101',
-    'password': 'language007',
-    'host': 'db4free.net',
-    'port': '3306',
-    'database': 'ap_project'
+    'user' : 'root',
+    'password' : 'language007',
+    'host' : 'localhost',
+    'port' : '3306',
+    'database' : 'crowd_fund_api'
 }
+
+
 
 def setup_database():
     config['database'] = None
@@ -20,7 +31,7 @@ def setup_database():
 
 # User Table
     cursor.execute("""
-    CREATE TABLE user (
+    CREATE TABLE user(
     id INT AUTO_INCREMENT PRIMARY KEY, 
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -139,6 +150,31 @@ def setup_database():
     connection.close()
   
     
+# try:
+#     # Setup the connection
+#     connection = mysql.connector.connect(
+#         host='db4free.net',
+#         user='project_101',
+#         password='language007',
+#         database='ap_project'
+#     )
+
+#     if connection.is_connected():
+#         db_info = connection.get_server_info()
+#         print(f"Connected to MySQL server version {db_info}")
+#         cursor = connection.cursor()
+#         cursor.execute("SELECT DATABASE();")
+#         db_name = cursor.fetchone()[0]
+#         print(f"You're connected to the database: {db_name}")
+
+# except Error as e:
+#     print(f"Error: {e}")
+
+# finally:
+#     if connection.is_connected():
+#         cursor.close()
+#         connection.close()
+#         print("MySQL connection closed.")
     
     
     

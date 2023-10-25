@@ -51,19 +51,50 @@ def get_user_by_id(user_id):
 
 
 # Getting a user logged in
+# def get_user(email):
+#     connection = mysql.connector.connect(**config)
+#     cursor = connection.cursor(dictionary=True)
+#     cursor.execute('SELECT * FROM user WHERE email=%s', (email,))
+#     user_record = cursor.fetchone()
+#     cursor.close()
+#     connection.close()
+
+#     if user_record:
+#         return User(id=user_record['id'], first_name=user_record['first_name'], last_name=user_record['last_name'], email=user_record['email'], password=user_record['password'], is_admin=user_record['is_admin'])
+#     return None
 def get_user(email):
-    connection = mysql.connector.connect(**config)
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM user WHERE email=%s', (email,))
-    user_record = cursor.fetchone()
-    cursor.close()
-    connection.close()
+    connection = None
+    cursor = None
+    try:
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor(dictionary=True)
+        
+        cursor.execute('SELECT * FROM `ap_project`.`user` WHERE email=%s', (email,))
 
-    if user_record:
-        return User(id=user_record['id'], first_name=user_record['first_name'], last_name=user_record['last_name'], email=user_record['email'], password=user_record['password'], is_admin=user_record['is_admin'])
-    return None
+        user_record = cursor.fetchone()
+        
+        if user_record:
+            return User(
+                id=user_record['id'],
+                first_name=user_record['first_name'],
+                last_name=user_record['last_name'],
+                email=user_record['email'],
+                password=user_record['password'],
+                is_admin=user_record['is_admin']
+            )
+        return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
+    finally:
+        if cursor: cursor.close()
+        if connection: connection.close()
 
-# add_category(user_id, data['category_name'], data['fundraising_for'], data['expiryDate'], data['amount'], data['description'], data['minimum_amount'])
+
+
+
+
+
 
 # Adding a category to the database
 def add_category(user_id, category_name, fundraising_for, expiry_date, amount, description, minimum_amount, balance):
