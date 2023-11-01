@@ -3,22 +3,22 @@ from mysql.connector import Error
 
 
 
-# config = {
-#     'user': 'project_101',
-#     'password': 'language007',
-#     'host': 'db4free.net',
-#     'port': '3306',
-#     'database': 'ap_project'
-# }
-
-
 config = {
-    'user' : 'root',
-    'password' : 'language007',
-    'host' : 'localhost',
-    'port' : '3306',
-    'database' : 'crowd_fund_api'
+    'user': 'first_user',
+    'password': 'language007',
+    'host': 'db4free.net',
+    'port': '3306',
+    'database': 'final_fund'
 }
+
+
+# config = {
+#     'user' : 'root',
+#     'password' : 'language007',
+#     'host' : 'localhost',
+#     'port' : '3306',
+#     'database' : 'crowd_fund_api'
+# }
 
 
 
@@ -104,8 +104,8 @@ def setup_database():
     expiry_date DATE,
     amount DECIMAL(20,2) NOT NULL,
     description TEXT,
-    approved TINYINT(4) DEFAULT 0
-                   
+    approved TINYINT(4) DEFAULT 0,
+    minimum_amount DECIMAL(20, 2);
 );
 """)
     
@@ -123,9 +123,8 @@ def setup_database():
 """)
     
     cursor.execute("""
-    CREATE TABLE donated_people (
+    CREATE TABLE the_donated_people (
     id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     amount_donated DECIMAL(20,2) NOT NULL,
     category_name VARCHAR(255) NOT NULL,

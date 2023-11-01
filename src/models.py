@@ -18,7 +18,7 @@ class User():
             pass
 
 
-def add_user(first_name, last_name, email, password, is_admin=True):
+def add_user(first_name, last_name, email, password, is_admin=False):
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
@@ -69,7 +69,7 @@ def get_user(email):
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor(dictionary=True)
         
-        cursor.execute('SELECT * FROM `ap_project`.`user` WHERE email=%s', (email,))
+        cursor.execute('SELECT * FROM `final_fund`.`user` WHERE email=%s', (email,))
 
         user_record = cursor.fetchone()
         
@@ -138,7 +138,7 @@ def fetch_category_by_id(category_id):
     cursor = connection.cursor(dictionary=True) 
     query = """
     SELECT * FROM categories
-    WHERE id = %s
+    WHERE user_id = %s
     """
     cursor.execute(query, (category_id,))
     cat = cursor.fetchone()
@@ -381,7 +381,7 @@ def donated_people( email, amount_donated, category_name, user_email):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
 
-    cursor.execute("INSERT INTO donated_people ( email, amount_donated, category_name, user_email) VALUES ( %s, %s, %s, %s)", (email, amount_donated, category_name, user_email))
+    cursor.execute("INSERT INTO the_donated_people ( email, amount_donated, category_name, user_email) VALUES ( %s, %s, %s, %s)", (email, amount_donated, category_name, user_email))
     connection.commit()
     cursor.close()
     connection.close()
@@ -391,7 +391,7 @@ def donated_people( email, amount_donated, category_name, user_email):
 def get_donated_persons():
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT email, amount_donated, category_name, user_email FROM donated_people")
+    cursor.execute("SELECT email, amount_donated, category_name, user_email FROM the_donated_people")
     result = cursor.fetchall()
     cursor.close()
     connection.close()

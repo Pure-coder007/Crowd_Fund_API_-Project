@@ -307,6 +307,7 @@ def see_approved_requests():
 
 
 from .models import fetch_category_by_id
+from decimal import Decimal
 
 @auth.route('/start_donating/<int:id>', methods=['POST'])
 def start_donating(id):
@@ -326,20 +327,20 @@ def start_donating(id):
         return jsonify({'message': 'Some required data is missing', 'status': 400}), 400
 
     donated_amount = float(donated_amount_data)
-
+    donated_amount = Decimal(donated_amount_data)
     cat = fetch_category_by_id(id)
     if not cat:
         return jsonify({'message': 'Category not found', 'status': 404}), 404
-    balance = cat['balance']
-    if donated_amount_data > balance:
+    balance = Decimal(cat['balance'])
+    if donated_amount > Decimal(balance):
         return jsonify({'message': 'You cannot donate more than the required amount', 'balance': balance}), 400
 
-    minimun_donation = cat['minimum_amount']
+    minimun_donation = Decimal(cat['minimum_amount'])
     if donated_amount < minimun_donation:
         return jsonify({'message': 'You cannot donate less than the minimum amount', 
         'minimum_amount': minimun_donation}), 400
 
-    new_balance = float(balance) - donated_amount
+    new_balance = (balance) - Decimal(donated_amount)
     update_balance_in_categories(id, new_balance)
     # save into database
 

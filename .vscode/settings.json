@@ -1,0 +1,32 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "db4free.net",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "First connection",
+            "database": "final_fund",
+            "username": "first_user",
+            "password": "language007"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "db4free.net",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "my connection",
+            "database": "final_fund",
+            "username": "first_user",
+            "password": "language007"
+        }
+    ]
+}
